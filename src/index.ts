@@ -11,7 +11,6 @@ import hpp from "hpp";
 import morgan from "morgan";
 import logger from "./lib/logger";
 import taskRouter from "./routes/task_route";
-import rateLimit from "express-rate-limit";
 
 dotenv.config();
 const app = express();
@@ -19,13 +18,6 @@ const app = express();
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-// ! WEE MAMA SO BUGGY LA
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-
-app.use(limiter);
 
 app.use(
   compression({
