@@ -29,6 +29,7 @@ export const register: RequestHandler = async (
       .where(eq(users.email, email));
     if (emailExist.length) {
       createErrorRes(res, "Email already exist", 400);
+      return;
     }
     const hashedPassword = await bcrypt.hash(password, 8);
     const [newUser] = await db
@@ -47,8 +48,6 @@ export const register: RequestHandler = async (
       statusCode: HttpStatusCode.CREATED,
     });
   } catch (error) {
-    logger.info("test");
-    logger.error(error);
     createErrorRes(res, error);
   }
 };
