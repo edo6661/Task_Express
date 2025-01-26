@@ -5,10 +5,13 @@
     "rootDir": "./src",
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "outDir": "./dist",
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "strict": true,
-    "skipLibCheck": true
+    "removeComments": true,
+    "sourceMap": false,
+    "inlineSourceMap": false
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

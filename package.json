@@ -14,6 +14,8 @@
     "db:migrate": "npx drizzle-kit migrate",
     "db:studio": "npx drizzle-kit studio --port=3000",
     "build": "tsc",
+    "minify": "terser dist/index.js --compress --mangle -o dist/index.js",
+    "build:production": "npm run build && npm run minify",
     "start": "node dist/index.js"
   },
   "dependencies": {
@@ -45,7 +47,9 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.10",
     "@types/pg": "^8.11.11",
+    "@types/terser": "^3.8.1",
     "nodemon": "^3.1.9",
+    "terser": "^5.37.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }
