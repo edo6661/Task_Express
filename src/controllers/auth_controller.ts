@@ -1,20 +1,22 @@
 import { RequestHandler } from "express";
 import { createErrorRes, createSuccessRes } from "../utils/api_response";
 import { db } from "../lib/db/database";
-import { NewUser, users } from "../lib/db/schema";
+import { NewUser, User, users } from "../lib/db/schema";
 import { eq } from "drizzle-orm";
-import { RequestSignIn, RequestSignUp } from "../types/auth";
-import bcrypt from "bcryptjs";
-import { HttpStatusCode } from "../types/api";
+import { HttpStatusCode, RequestBody } from "../types/api";
 import { validateEmpty } from "../utils/validation";
 import logger from "../lib/logger";
 import { createAccessToken, decodeAccessToken } from "../lib/token";
-export const register: RequestHandler = async (req: RequestSignUp, res) => {
+import bcrypt from "bcryptjs";
+export const register: RequestHandler = async (
+  req: RequestBody<NewUser>,
+  res
+) => {
   try {
     const { email, password, name } = req.body;
     if (
-      validateEmpty(email) &&
-      validateEmpty(password) &&
+      validateEmpty(email) ||
+      validateEmpty(password) ||
       validateEmpty(name)
     ) {
       createErrorRes(res, "Email, password, and name are required", 400);
@@ -51,7 +53,10 @@ export const register: RequestHandler = async (req: RequestSignUp, res) => {
   }
 };
 
-export const login: RequestHandler = async (req: RequestSignIn, res) => {
+export const login: RequestHandler = async (
+  req: RequestBody<Pick<User, "email" | "password">>,
+  res
+) => {
   try {
     if (validateEmpty(req.body.email) && validateEmpty(req.body.password)) {
       createErrorRes(res, "Email and password are required", 400);

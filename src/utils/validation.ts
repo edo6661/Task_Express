@@ -1,6 +1,8 @@
-export function validateEmpty(value: string): Boolean {
-  if (value === undefined || value === null || value === "") {
-    return true;
-  }
-  return false;
+export function validateEmpty(value: any): boolean {
+  return (
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0)
+  );
 }

@@ -1,0 +1,126 @@
+import { RequestHandler } from "express";
+import { HttpStatusCode, RequestBody } from "../types/api";
+import { NewTask, tasks } from "../lib/db/schema";
+import { db } from "../lib/db/database";
+import { createErrorRes, createSuccessRes } from "../utils/api_response";
+import { validateEmpty } from "../utils/validation";
+import { eq } from "drizzle-orm";
+
+import { validate as validateUUID } from "uuid";
+export const getTasks: RequestHandler = async (req, res) => {
+  try {
+    const allTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.userId, req.userId));
+    createSuccessRes(res, {
+      message: allTasks.length ? "Successfully fetched tasks" : "Task is empty",
+      data: allTasks,
+    });
+  } catch (error) {
+    createErrorRes(res, error);
+  }
+};
+
+export const createTask: RequestHandler = async (
+  req: RequestBody<NewTask>,
+  res
+) => {
+  try {
+    const { title, description, hexColor } = req.body;
+    if (
+      validateEmpty(title) ||
+      validateEmpty(description) ||
+      validateEmpty(hexColor)
+    ) {
+      createErrorRes(
+        res,
+        "Title, description, and hexColor are required",
+        HttpStatusCode.BAD_REQUEST
+      );
+      return;
+    }
+    const [task] = await db
+      .insert(tasks)
+      .values({ ...req.body, userId: req.userId })
+      .returning();
+    createSuccessRes(res, {
+      statusCode: HttpStatusCode.CREATED,
+      message: "Successfully created task",
+      data: task,
+    });
+  } catch (error) {
+    createErrorRes(res, error);
+  }
+};
+export const updateTask: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!validateUUID(id)) {
+      createErrorRes(res, "Invalid task id", HttpStatusCode.BAD_REQUEST);
+      return;
+    }
+    const { title, description, hexColor } = req.body;
+    if (
+      validateEmpty(title) ||
+      validateEmpty(description) ||
+      validateEmpty(hexColor)
+    ) {
+      createErrorRes(
+        res,
+        "Title, description, and hexColor are required",
+        HttpStatusCode.BAD_REQUEST
+      );
+      return;
+    }
+
+    const [task] = await db.select().from(tasks).where(eq(tasks.id, id));
+    if (!task) {
+      createErrorRes(res, "Task not found", HttpStatusCode.NOT_FOUND);
+      return;
+    }
+    if (task.title === title && task.description === description) {
+      createErrorRes(res, "No changes detected", HttpStatusCode.BAD_REQUEST);
+      return;
+    }
+
+    const [updatedTask] = await db
+      .update(tasks)
+      .set({ ...req.body })
+      .where(eq(tasks.id, id))
+      .returning();
+    if (!updatedTask) {
+      createErrorRes(res, "Task not found", HttpStatusCode.NOT_FOUND);
+      return;
+    }
+    createSuccessRes(res, {
+      message: "Successfully updated task",
+      data: updatedTask,
+    });
+  } catch (error) {
+    createErrorRes(res, error);
+  }
+};
+export const deleteTask: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!validateUUID(id)) {
+      createErrorRes(res, "Invalid task id", HttpStatusCode.BAD_REQUEST);
+      return;
+    }
+    const [deletedTask] = await db.select().from(tasks).where(eq(tasks.id, id));
+    if (!deletedTask) {
+      createErrorRes(res, "Task not found", HttpStatusCode.NOT_FOUND);
+      return;
+    }
+    await db.delete(tasks).where(eq(tasks.id, id)).returning();
+
+    createSuccessRes(res, {
+      message: "Successfully deleted task",
+      data: deleteTask,
+    });
+  } catch (error) {
+    createErrorRes(res, error);
+  }
+};

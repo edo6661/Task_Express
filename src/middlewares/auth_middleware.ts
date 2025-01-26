@@ -19,7 +19,7 @@ export const authMiddleware: RequestHandler = async (req, res, next) => {
     const { userId } = decodeAccessToken(token);
     const [user] = await db.select().from(users).where(eq(users.id, userId));
     if (!user) {
-      createErrorRes(res, "Token is not valid", HttpStatusCode.UNAUTHORIZED);
+      createErrorRes(res, "User not found", HttpStatusCode.NOT_FOUND);
       return;
     }
 

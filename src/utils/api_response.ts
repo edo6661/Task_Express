@@ -7,7 +7,6 @@ export const createSuccessRes = <T>(
 ): Response => {
   const { data, message = "Success", statusCode = HttpStatusCode.OK } = options;
   const ApiRes: ApiRes<T> = {
-    status: true,
     statusCode,
     message,
     ...(data !== undefined && { data }),
@@ -30,7 +29,6 @@ export const createErrorRes = (
   errors?: Errors
 ): Response => {
   const ApiRes: ApiRes<never> = {
-    status: false,
     statusCode,
     message: getErrorMsg(message),
     ...(errors && { errors }),

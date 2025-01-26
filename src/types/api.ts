@@ -1,3 +1,10 @@
+import { Request } from "express";
+
+export type RequestBody<T> = Request<{}, {}, T>;
+export type RequestParams<T> = Request<T, {}, {}>;
+export type RequestQuery<T> = Request<{}, T, {}>;
+export type RequestBodyParams<T, U> = Request<T, {}, U>;
+
 export enum HttpStatusCode {
   OK = 200,
   CREATED = 201,
@@ -17,7 +24,6 @@ export type SuccessOptions<T> = {
 };
 
 export interface ApiRes<T> {
-  status: boolean;
   statusCode: number;
   message: string;
   data?: T;

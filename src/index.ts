@@ -10,6 +10,7 @@ import helmet from "helmet";
 import hpp from "hpp";
 import morgan from "morgan";
 import logger from "./lib/logger";
+import taskRouter from "./routes/task_route";
 dotenv.config();
 const app = express();
 
@@ -37,10 +38,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const v1Router = express.Router();
 app.use("/api/v1", v1Router);
 v1Router.use("/auth", authRouter);
-
-v1Router.get("/", (req, res) => {
-  res.send("test bang");
-});
+v1Router.use("/tasks", taskRouter);
 
 app.use(
   (
