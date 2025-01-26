@@ -5,8 +5,14 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - PORT=8000
-      - DATABASE_URL=postgresql://postgres:test123@db:5432/mydb
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${PORT:-8000}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://default_connection}
+      - DATABASE_USER=${DATABASE_USER:-default_user}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-default_password}
+      - DATABASE_NAME=${DATABASE_NAME:-default_db}
+      - DATABASE_HOST=${DATABASE_HOST:-default_host}
+      - DATABASE_PORT=${DATABASE_PORT:-5432}
     depends_on:
       - db
     volumes:

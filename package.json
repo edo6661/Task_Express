@@ -7,16 +7,39 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon --legacy-watch"
+    "dev": "npx nodemon --legacy-watch",
+    "up": "docker compose up --build",
+    "down": "docker compose down",
+    "db:generate": "npx drizzle-kit generate",
+    "db:migrate": "npx drizzle-kit migrate",
+    "db:studio": "npx drizzle-kit studio --port=3000"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "compression": "^1.7.5",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.30.2",
     "drizzle-orm": "^0.38.4",
     "express": "^4.21.2",
-    "pg": "^8.13.1"
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/compression": "^1.7.5",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/hpp": "^0.2.6",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.10",
     "@types/pg": "^8.11.11",
     "nodemon": "^3.1.9",
