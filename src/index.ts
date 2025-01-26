@@ -14,7 +14,6 @@ import taskRouter from "./routes/task_route";
 dotenv.config();
 const app = express();
 
-// !
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
