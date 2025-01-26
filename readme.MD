@@ -2,14 +2,6 @@
 
 Task Express is a backend application built with **Node.js** and **Express.js**, supported by various libraries for enhanced functionality, security, and database management.
 
-## Project Details
-
-- **Name**: Task Express
-- **Version**: 1.0.0
-- **Description**: yey
-- **Author**: aq
-- **License**: ISC
-
 ## Dependencies
 
 This project utilizes several libraries for its functionality, including `bcryptjs`, `express`, `dotenv`, `drizzle-orm`, `jsonwebtoken`, and more.
