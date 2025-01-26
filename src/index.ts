@@ -69,9 +69,9 @@ process.on("unhandledRejection", (reason, promise) => {
   logger.error("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
-pool.on("connect", () => logger.info("Koneksi baru ke database dibuat!"));
-pool.on("remove", () => logger.info("Koneksi dihapus dari pool."));
-pool.on("error", (err) => logger.error("Error di pool:", err));
+pool.on("connect", () => logger.info("Connected to pool."));
+pool.on("remove", () => logger.info("Client removed from pool."));
+pool.on("error", (err) => logger.error("Error in pool", err));
 
 const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
