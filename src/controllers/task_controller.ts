@@ -27,6 +27,7 @@ export const createTask: RequestHandler = async (
   res
 ) => {
   try {
+    req.body = { ...req.body, userId: req.userId };
     const { title, description, hexColor } = req.body;
     if (
       validateEmpty(title) ||
@@ -42,7 +43,10 @@ export const createTask: RequestHandler = async (
     }
     const [task] = await db
       .insert(tasks)
-      .values({ ...req.body, userId: req.userId })
+      .values({
+        ...req.body,
+        ...(req.body.dueAt && { dueAt: new Date(req.body.dueAt) }),
+      })
       .returning();
     createSuccessRes(res, {
       statusCode: HttpStatusCode.CREATED,
