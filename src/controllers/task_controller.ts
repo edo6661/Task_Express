@@ -21,7 +21,6 @@ export const getTasks: RequestHandler = async (req, res) => {
     createErrorRes(res, error);
   }
 };
-
 export const createTask: RequestHandler = async (
   req: RequestBody<NewTask>,
   res
@@ -41,13 +40,26 @@ export const createTask: RequestHandler = async (
       );
       return;
     }
-    const [task] = await db
-      .insert(tasks)
-      .values({
-        ...req.body,
-        ...(req.body.dueAt && { dueAt: new Date(req.body.dueAt) }),
-      })
-      .returning();
+
+    const newTask = {
+      ...req.body,
+    };
+
+    if (req.body.dueAt) {
+      newTask.dueAt = new Date(req.body.dueAt);
+
+      if (isNaN(newTask.dueAt.getTime())) {
+        createErrorRes(
+          res,
+          "Invalid date format for dueAt",
+          HttpStatusCode.BAD_REQUEST
+        );
+        return;
+      }
+    }
+
+    const [task] = await db.insert(tasks).values(newTask).returning();
+
     createSuccessRes(res, {
       statusCode: HttpStatusCode.CREATED,
       message: "Successfully created task",
