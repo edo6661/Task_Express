@@ -141,7 +141,6 @@ export const deleteTask: RequestHandler = async (req, res) => {
     createErrorRes(res, error);
   }
 };
-
 export const syncTask: RequestHandler = async (
   req: RequestBody<Task[]>,
   res
@@ -149,9 +148,10 @@ export const syncTask: RequestHandler = async (
   try {
     const tasksFromBody = req.body;
     if (!tasksFromBody || !Array.isArray(tasksFromBody)) {
-      createErrorRes(res, "Invalid tasksFromBody ", HttpStatusCode.BAD_REQUEST);
+      createErrorRes(res, "Invalid tasksFromBody", HttpStatusCode.BAD_REQUEST);
       return;
     }
+
     const newTasks = tasksFromBody.map((task) => ({
       ...task,
       userId: req.userId,
@@ -159,10 +159,25 @@ export const syncTask: RequestHandler = async (
       createdAt: task.createdAt ? new Date(task.createdAt) : new Date(),
       updatedAt: task.updatedAt ? new Date(task.updatedAt) : new Date(),
     }));
-    const [insertedTasks] = await db.insert(tasks).values(newTasks).returning();
+
+    for (const task of newTasks) {
+      await db.transaction(async (tx) => {
+        const existingTask = await tx
+          .select()
+          .from(tasks)
+          .where(eq(tasks.id, task.id));
+
+        if (existingTask.length > 0) {
+          await tx.update(tasks).set(task).where(eq(tasks.id, task.id));
+        } else {
+          await tx.insert(tasks).values(task);
+        }
+      });
+    }
+
     createSuccessRes(res, {
       message: "Successfully synced tasks",
-      data: insertedTasks,
+      data: await db.select().from(tasks).where(eq(tasks.userId, req.userId)),
     });
   } catch (error) {
     createErrorRes(res, error);
