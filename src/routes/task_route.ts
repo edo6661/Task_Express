@@ -16,5 +16,5 @@ taskRouter.get("/", getTasks);
 taskRouter.post("/", createTask);
 taskRouter.patch("/:id", updateTask);
 taskRouter.delete("/:id", deleteTask);
-taskRouter.delete("/sync", syncTask);
+taskRouter.post("/sync", syncTask);
 export default taskRouter;
