@@ -4,6 +4,7 @@ import {
   createTask,
   deleteTask,
   getTasks,
+  syncTask,
   updateTask,
 } from "../controllers/task_controller";
 
@@ -15,4 +16,5 @@ taskRouter.get("/", getTasks);
 taskRouter.post("/", createTask);
 taskRouter.patch("/:id", updateTask);
 taskRouter.delete("/:id", deleteTask);
+taskRouter.delete("/sync", syncTask);
 export default taskRouter;

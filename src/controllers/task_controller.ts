@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { HttpStatusCode, RequestBody } from "../types/api";
-import { NewTask, tasks } from "../lib/db/schema";
+import { NewTask, Task, tasks } from "../lib/db/schema";
 import { db } from "../lib/db/database";
 import { createErrorRes, createSuccessRes } from "../utils/api_response";
 import { validateEmpty } from "../utils/validation";
@@ -21,6 +21,7 @@ export const getTasks: RequestHandler = async (req, res) => {
     createErrorRes(res, error);
   }
 };
+
 export const createTask: RequestHandler = async (
   req: RequestBody<NewTask>,
   res
@@ -135,6 +136,33 @@ export const deleteTask: RequestHandler = async (req, res) => {
     createSuccessRes(res, {
       message: "Successfully deleted task",
       data: deleteTask,
+    });
+  } catch (error) {
+    createErrorRes(res, error);
+  }
+};
+
+export const syncTask: RequestHandler = async (
+  req: RequestBody<Task[]>,
+  res
+) => {
+  try {
+    const tasksFromBody = req.body;
+    if (!tasksFromBody || !Array.isArray(tasksFromBody)) {
+      createErrorRes(res, "Invalid tasksFromBody ", HttpStatusCode.BAD_REQUEST);
+      return;
+    }
+    const newTasks = tasksFromBody.map((task) => ({
+      ...task,
+      userId: req.userId,
+      dueAt: task.dueAt ? new Date(task.dueAt) : new Date(),
+      createdAt: task.createdAt ? new Date(task.createdAt) : new Date(),
+      updatedAt: task.updatedAt ? new Date(task.updatedAt) : new Date(),
+    }));
+    const [insertedTasks] = await db.insert(tasks).values(newTasks).returning();
+    createSuccessRes(res, {
+      message: "Successfully synced tasks",
+      data: insertedTasks,
     });
   } catch (error) {
     createErrorRes(res, error);
