@@ -103,7 +103,12 @@ export const updateTask: RequestHandler = async (req, res) => {
 
     const [updatedTask] = await db
       .update(tasks)
-      .set({ ...req.body })
+      .set({
+        ...req.body,
+        createdAt: task.createdAt ? new Date(task.createdAt) : new Date(),
+        updatedAt: task.updatedAt ? new Date(task.updatedAt) : new Date(),
+        dueAt: task.dueAt ? new Date(task.dueAt) : new Date(),
+      })
       .where(eq(tasks.id, id))
       .returning();
     if (!updatedTask) {
