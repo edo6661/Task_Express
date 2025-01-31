@@ -77,7 +77,7 @@ export const updateTask: RequestHandler = async (req, res) => {
       createErrorRes(res, "Invalid task id", HttpStatusCode.BAD_REQUEST);
       return;
     }
-    const { title, description, hexColor } = req.body;
+    const { title, description, hexColor, dueAt } = req.body;
     if (
       validateEmpty(title) ||
       validateEmpty(description) ||
@@ -107,7 +107,7 @@ export const updateTask: RequestHandler = async (req, res) => {
         ...req.body,
         createdAt: task.createdAt ? new Date(task.createdAt) : new Date(),
         updatedAt: task.updatedAt ? new Date(task.updatedAt) : new Date(),
-        dueAt: task.dueAt ? new Date(task.dueAt) : new Date(),
+        dueAt: dueAt ? new Date(dueAt) : new Date(),
       })
       .where(eq(tasks.id, id))
       .returning();
