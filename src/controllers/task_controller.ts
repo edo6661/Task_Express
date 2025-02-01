@@ -96,7 +96,12 @@ export const updateTask: RequestHandler = async (req, res) => {
       createErrorRes(res, "Task not found", HttpStatusCode.NOT_FOUND);
       return;
     }
-    if (task.title === title && task.description === description) {
+    if (
+      task.title === title &&
+      task.description === description &&
+      task.hexColor === hexColor &&
+      task.dueAt === dueAt
+    ) {
       createErrorRes(res, "No changes detected", HttpStatusCode.BAD_REQUEST);
       return;
     }
